@@ -1,5 +1,8 @@
 # AWS Security Monitoring and Automated Response System
 
+# Comments
+02/12 - Upload updated script. 
+
 ## Overview
 This project demonstrates a cloud-native security monitoring pipeline built in AWS.
 
