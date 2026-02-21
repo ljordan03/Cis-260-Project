@@ -1,0 +1,140 @@
+import os
+import json
+import uuid
+import hashlib
+from datetime import datetime, timezone
+
+import boto3
+from botocore.exceptions import ClientError
+
+dynamodb = boto3.resource("dynamodb")
+s3 = boto3.client("s3")
+sns = boto3.client("sns")
+
+TABLE_NAME = os.environ["TABLE_NAME"]
+SNS_TOPIC_ARN = os.environ["SNS_TOPIC_ARN"]
+EVIDENCE_BUCKET = os.environ["EVIDENCE_BUCKET"]  # set this env var
+CASE_PREFIX = os.environ.get("CASE_PREFIX", "CASE-")
+
+table = dynamodb.Table(TABLE_NAME)
+
+def now_iso():
+    return datetime.now(timezone.utc).isoformat()
+
+def stable_hash(obj) -> str:
+    raw = json.dumps(obj, sort_keys=True, default=str).encode("utf-8")
+    return hashlib.sha256(raw).hexdigest()[:16].upper()
+
+def write_evidence(case_id: str, event_obj: dict) -> str:
+    key = f"cases/{case_id}/evidence.json"
+    s3.put_object(
+        Bucket=EVIDENCE_BUCKET,
+        Key=key,
+        Body=json.dumps(event_obj, indent=2).encode("utf-8"),
+        ContentType="application/json"
+    )
+    return f"s3://{EVIDENCE_BUCKET}/{key}"
+
+def create_case(title: str, severity: str, source: str, event_obj: dict) -> dict:
+    case_id = f"{CASE_PREFIX}{uuid.uuid4().hex[:6].upper()}"
+    ts = now_iso()
+    event_hash = stable_hash({"source": source, "title": title, "severity": severity, "event": event_obj})
+
+    evidence_uri = write_evidence(case_id, event_obj)
+
+    item = {
+        "CaseId": case_id,
+        "Status": "NEW",
+        "Severity": severity,
+        "Title": title,
+        "Source": source,
+        "CreatedAt": ts,
+        "UpdatedAt": ts,
+        "AssignedTo": "UNASSIGNED",
+        "EventHash": event_hash,
+        "EvidenceUri": evidence_uri,
+        "Notes": []
+    }
+
+    table.put_item(Item=item)
+
+    sns.publish(
+        TopicArn=SNS_TOPIC_ARN,
+        Subject=f"[{severity}] New Case {case_id}",
+        Message=(
+            f"New Security Case Created\n"
+            f"CaseId: {case_id}\n"
+            f"Severity: {severity}\n"
+            f"Title: {title}\n"
+            f"Evidence: {evidence_uri}\n"
+            f"Next: Review & manually triage (update Status/AssignedTo in DynamoDB)."
+        )
+    )
+
+    return item
+
+def update_case(case_id: str, status: str = None, assigned_to: str = None, note: str = None) -> dict:
+    ts = now_iso()
+
+    updates = []
+    values = {":t": ts}
+    names = {"#S": "Status"}
+
+    if status:
+        updates.append("#S = :s")
+        values[":s"] = status
+
+    if assigned_to:
+        updates.append("AssignedTo = :a")
+        values[":a"] = assigned_to
+
+    if note:
+        # append a note to Notes list
+        updates.append("Notes = list_append(if_not_exists(Notes, :empty), :n)")
+        values[":empty"] = []
+        values[":n"] = [f"{ts} - {note}"]
+
+    updates.append("UpdatedAt = :t")
+
+    resp = table.update_item(
+        Key={"CaseId": case_id},
+        UpdateExpression="SET " + ", ".join(updates),
+        ExpressionAttributeValues=values,
+        ExpressionAttributeNames=names,
+        ReturnValues="ALL_NEW"
+    )
+    return resp["Attributes"]
+
+def lambda_handler(event, context):
+    # Manual command mode
+    if isinstance(event, dict) and event.get("action") == "create_case":
+        return create_case(
+            title=event.get("Title", "Manual case"),
+            severity=event.get("Severity", "MEDIUM"),
+            source="Manual",
+            event_obj=event
+        )
+
+    if isinstance(event, dict) and event.get("action") == "update_case":
+        return update_case(
+            case_id=event["CaseId"],
+            status=event.get("Status"),
+            assigned_to=event.get("AssignedTo"),
+            note=event.get("Note")
+        )
+
+    # S3 intake mode (your existing trigger)
+    if "Records" in event and event["Records"] and "s3" in event["Records"][0]:
+        rec = event["Records"][0]
+        bucket = rec["s3"]["bucket"]["name"]
+        key = rec["s3"]["object"]["key"]
+        title = "New object uploaded to monitored prefix"
+        severity = "MEDIUM"
+        source = "S3"
+
+        # Store the S3 pointer as evidence
+        event_obj = {"bucket": bucket, "key": key, "raw_event": event}
+
+        return create_case(title=title, severity=severity, source=source, event_obj=event_obj)
+
+    return {"ok": False, "msg": "Unsupported event format"}
