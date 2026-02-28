@@ -30,6 +30,7 @@ CloudTrail -> GuardDuty -> Security Hub -> EventBridge -> SNS -> Lambda -> s3 + 
 - Evidence artificats written to S3
 - Case metadata structured and stored
 - CloudWatch montioring verified
+- Event pattern configured to filter HIGH and CRITICAL findings
 
 ## Next Steps
 - Connect EventBridge to Lambda trigger
