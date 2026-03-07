@@ -76,6 +76,20 @@ When Lambda wrote evidence.json to S3 the PutObject event triggered Lambda again
 
 - Add CloudWatch alarm for abnormal invocation spikes
 - Add severity-based notification filtering
+## Architecture and Infrastructure Screenshots
+## Cloudtrail Logging
+### CloudTrail Logging
+![CloudTrail](./Screenshot%202026-02-20%20201536.png)
+
+### IAM Role Configuration
+![IAM Role](./Screenshot%202026-02-20%20222356.png)
+
+### Lambda Environment Variables
+![Lambda Config](./Screenshot%202026-02-20%20222743.png)
+
+### SNS Alert Subscription
+![SNS Alerts](./Screenshot%202026-02-21%20001220.png)
+
 ## Author
 Larry Jordan  
 Cybersecurity / Cloud Security Student
