@@ -41,6 +41,11 @@ CloudTrail -> GuardDuty -> Security Hub -> EventBridge -> SNS -> Lambda -> s3 + 
   
 - During integration testing, an S3 trigger was configured on the same bucket used to store evidence artifacts.
 When Lambda wrote evidence.json to S3 the PutObject event triggered Lambda again creating a recursive invocation loop.
+### Live Alert Notification
+![Live Alert Notification
+![Live Alert](./IMG_8412.PNG)
+
+
 ## Observed Impact
 
 - 438,000 Lambda invocations
