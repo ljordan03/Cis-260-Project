@@ -88,7 +88,7 @@ When Lambda wrote evidence.json to S3 the PutObject event triggered Lambda again
 ![Lambda Config](./Screenshot%202026-02-20%20222743.png)
 
 ### SNS Alert Subscription
-![SNS Alerts](./Screenshot%202026-02-21%20001220.png)
+![SNS Alerts](./Screenshot%202026-02-21%2021139.png)
 
 ## Author
 Larry Jordan  
