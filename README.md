@@ -85,7 +85,7 @@ When Lambda wrote evidence.json to S3 the PutObject event triggered Lambda again
 ![IAM Role](./Screenshot%202026-02-20%20222356.png)
 
 ### Lambda Environment Variables
-![Lambda Config](./Screenshot%202026-02-20%20001220.png)
+![Lambda Config](./Screenshot%202026-02-20%2001220.png)
 
 ### SNS Alert Subscription
 ![SNS Alerts](./Screenshot%202026-02-21%20021139.png)
