@@ -148,8 +148,6 @@ During testing, the scanner successfully detected a noncompliant rule:
 
 The alert email included the scan timestamp, number of violations, and a link to the full report stored in S3.
 
-This extends the project beyond threat detection and demonstrates how the same event-driven architecture can support **security monitoring, incident alerting, and compliance reporting** within AWS.
-
 ---
 
 ## Author
