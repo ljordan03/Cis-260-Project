@@ -129,6 +129,35 @@ Lambda test events and GuardDuty sample findings.
 - **Total: 384 findings**
 - ### GuardDuty Threat Detection
 - ![GuardDuty](./Screenshot%202026-03-14%20010908.png)
+## Compliance Monitoring
+
+In addition to threat detection, the project also includes a **compliance scanning Lambda function** named `compliance_checker`.
+
+This function performs automated checks for AWS configuration issues and generates a compliance report.
+
+When the compliance check runs:
+
+- The Lambda scans AWS configuration results
+- A **JSON report** is generated and stored in the S3 bucket under  
+  `compliance-reports/`
+- An **SNS notification email** is sent with a summary of the findings
+
+During testing, the scanner successfully detected a noncompliant rule:
+
+- `iam-password-policy`
+
+The alert email included the scan timestamp, number of violations, and a link to the full report stored in S3.
+
+This extends the project beyond threat detection and demonstrates how the same event-driven architecture can support **security monitoring, incident alerting, and compliance reporting** within AWS.
+
+---
+
+## Author
+
+**Larry Jordan**  
+Cybersecurity / Cloud Security Student
+
+
 ## Author
 Larry Jordan  
 Cybersecurity / Cloud Security Student
