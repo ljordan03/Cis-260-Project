@@ -116,6 +116,19 @@ Real-time SNS notifications firing for each security case:
 - Real-time email alerts delivered via SNS
 - Full audit trail via CloudTrail
 - Zero Lambda errors across all executions
+- ## Integration Testing - Live Incident Alerts
+
+The system was fully tested end-to-end using both manual 
+Lambda test events and GuardDuty sample findings.
+
+### GuardDuty Sample Findings Generated
+- 🔴 Critical: 11
+- 🟠 High: 155
+- 🟡 Medium: 152
+- 🟢 Low: 66
+- **Total: 384 findings**
+- ### GuardDuty Threat Detection
+- ![GuardDuty](./Screenshot%202026-03-14%20010908.png)
 ## Author
 Larry Jordan  
 Cybersecurity / Cloud Security Student
