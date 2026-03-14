@@ -95,6 +95,27 @@ When Lambda wrote evidence.json to S3 the PutObject event triggered Lambda again
 ### SNS Alert Subscription
 ![SNS Alerts](./Screenshot%202026-02-21%20021139.png)
 
+## Security Hub
+Security Hub enabled and aggregating findings from 
+GuardDuty. Configured with AWS Foundational Security 
+Best Practices standard.
+
+## EventBridge Rule
+Rule: `high-severity-findings`
+Filters HIGH and CRITICAL findings and forwards them 
+to the case_manager Lambda function automatically.
+
+Real-time SNS notifications firing for each security case:
+- MEDIUM findings → Case created + email alert
+- HIGH/CRITICAL findings → Case created + S3 evidence 
+  + email alert
+
+## Results
+- 100+ security cases created in DynamoDB
+- Evidence stored in S3 per case
+- Real-time email alerts delivered via SNS
+- Full audit trail via CloudTrail
+- Zero Lambda errors across all executions
 ## Author
 Larry Jordan  
 Cybersecurity / Cloud Security Student
