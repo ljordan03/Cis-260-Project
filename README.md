@@ -83,7 +83,6 @@ When Lambda wrote evidence.json to S3 the PutObject event triggered Lambda again
 - Add severity-based notification filtering
 ## Architecture and Infrastructure Screenshots
 ## Cloudtrail Logging
-### CloudTrail Logging
 ![CloudTrail](./Screenshot%202026-02-20%20201536.png)
 
 ### IAM Role Configuration
