@@ -37,7 +37,7 @@ CloudTrail -> GuardDuty -> Security Hub -> EventBridge -> SNS -> Lambda -> s3 + 
 - Implement automated remediation logic
 - Simulate findings and validate alerts
 - Create architecture diagram
-  ## Intergration Testing Incident (Unintentional Recursive Invocation)
+  ## Integration Testing Incident (Unintentional Recursive Invocation)
   
 - During integration testing, an S3 trigger was configured on the same bucket used to store evidence artifacts.
 When Lambda wrote evidence.json to S3 the PutObject event triggered Lambda again creating a recursive invocation loop.
