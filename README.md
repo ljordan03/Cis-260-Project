@@ -27,7 +27,7 @@ CloudTrail -> GuardDuty -> Security Hub -> EventBridge -> SNS -> Lambda -> s3 + 
 - SNS topic created
 - EventBridge rule created to forward findings
 - Lambda function created for controlled response workflows
-- Evidence artificats written to S3
+- Evidence artifacts written to S3
 - Case metadata structured and stored
 - CloudWatch montioring verified
 - Event pattern configured to filter HIGH and CRITICAL findings
