@@ -29,7 +29,7 @@ CloudTrail -> GuardDuty -> Security Hub -> EventBridge -> SNS -> Lambda -> s3 + 
 - Lambda function created for controlled response workflows
 - Evidence artifacts written to S3
 - Case metadata structured and stored
-- CloudWatch montioring verified
+- CloudWatch monitoring verified
 - Event pattern configured to filter HIGH and CRITICAL findings
 
 ## Next Steps
